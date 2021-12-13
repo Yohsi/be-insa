@@ -2,7 +2,7 @@
 import numpy as np
 from numpy.linalg import pinv, norm
 from pinocchio import neutral
-from robot_arm import Robot
+from legged_robot import Robot
 import time
 
 # Create a 7DOF robot.

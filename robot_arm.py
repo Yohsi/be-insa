@@ -56,8 +56,8 @@ class Robot:
         jointId = self.model.addJoint(jointId,joint,jointPlacement,jointName)
         self.model.appendBodyToJoint(jointId,Inertia.Random(),SE3.Identity())
         self.viewer.viewer.gui.addSphere('world/' + prefix + 'shoulder', 0.3,colorred)
-        self.visuals.append( Visual('world/' + prefix + 'shoulder',jointId,SE3.Identity()) )
-        self.viewer.viewer.gui.addBox('world/' + prefix + 'upperarm', .1,.1,.5,color)
+        self.visuals.append( Visual('world/' + prefix + 'shoulder', jointId, SE3.Identity()) )
+        self.viewer.viewer.gui.addBox('world/' + prefix + 'upperarm', .1, .1, .5, color)
         self.visuals.append( Visual('world/' + prefix + 'upperarm',jointId,SE3(eye(3),np.array([0., 0., .5]))))
 
         jointName          = prefix + "elbow_joint"
