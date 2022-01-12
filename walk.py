@@ -11,11 +11,13 @@ class PiecewiseLinear:
         self.times = [0]
         self.segments = [np.array([x_init, y_init, z_init])]
 
-    def add_segment(self, duration, x, y, z):
+    def add_segment(self, x, y, z, duration):
         self.times.append(self.times[-1] + duration)
         self.segments.append(np.array([x, y, z]))
 
     def eval(self, t):
+        # print([round(i, 1) for i in self.times])
+        # print(self.segments)
         if t < 0:
             t = 0
         if t > self.times[-1]:
@@ -31,34 +33,34 @@ class PiecewiseLinear:
         t_end = self.times[i]
 
         k = (t - t_start) / (t_end - t_start)
-        return k * (end - start)
+        return start + k * (end - start)
 
 
 class PiecewisePolynomial:
     pass
 
 
-def move_to_coord(leftFoot, rightFoot, waist, duration):
-    global q_prev
-    ik = InverseKinematics(robot)
-    ik.leftFootRefPose = SE3(eye(3), leftFoot)
-    ik.rightFootRefPose = SE3(eye(3), rightFoot)
-    ik.waistRefPose = SE3(eye(3), waist)
+# def move_to_coord(leftFoot, rightFoot, waist, duration):
+#     global q_prev
+#     ik = InverseKinematics(robot)
+#     ik.leftFootRefPose = SE3(eye(3), leftFoot)
+#     ik.rightFootRefPose = SE3(eye(3), rightFoot)
+#     ik.waistRefPose = SE3(eye(3), waist)
 
-    q_result = ik.solve(q_prev)
+#     q_result = ik.solve(q_prev)
 
-    dt = 1 / 60
-    nb_iter = int(duration / dt)
+#     dt = 1 / 60
+#     nb_iter = int(duration / dt)
 
-    q_diff = (q_result - q_prev) / nb_iter
-    q = q_prev
-    for i in range(nb_iter):
-        q += q_diff
-        robot.display(q)
-        time.sleep(dt)
+#     q_diff = (q_result - q_prev) / nb_iter
+#     q = q_prev
+#     for i in range(nb_iter):
+#         q += q_diff
+#         robot.display(q)
+#         time.sleep(dt)
 
-    robot.display(q_result)
-    q_prev = q_result
+#     robot.display(q_result)
+#     q_prev = q_result
 
 
 robot = Robot()
@@ -169,12 +171,15 @@ posesWaist.add_segment(0, -1.5, 0, dt)
 #     duration = t - prevTime
 #     prevTime = t
 
-increment = 0.1
+increment = 0.05
+q_prev = q_init
 for t in np.arange(0, 10, increment):
     ik = InverseKinematics(robot)
     ik.leftFootRefPose = SE3(eye(3), posesLeft.eval(t))
     ik.rightFootRefPose = SE3(eye(3), posesRight.eval(t))
     ik.waistRefPose = SE3(eye(3), posesWaist.eval(t))
-    q_result = ik.solve(q_init)
+    q_result = ik.solve(q_prev)
+    q_prev = q_result
     robot.display(q_result)
     time.sleep(increment)
+    # print([round(i, 1) for i in posesLeft.eval(t)])
