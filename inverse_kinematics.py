@@ -49,5 +49,5 @@ class InverseKinematics(object):
         return ssq
 
     def solve(self, q_init):
-        bfgs_result = fmin_bfgs(self.cost, q_init, callback=CallbackLogger(self))
+        bfgs_result = fmin_bfgs(self.cost, q_init)
         return bfgs_result.reshape(15, 1)
