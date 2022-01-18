@@ -226,13 +226,19 @@ nb_iter = int(increment / dt)
 
 qs = [q_init]
 
+print("0%", end="")
+
 for t in np.arange(0, posesLeft.max_t(), increment):
     ik = InverseKinematics(robot)
     ik.leftFootRefPose = SE3(eye(3), posesLeft.eval(t))
     ik.rightFootRefPose = SE3(eye(3), posesRight.eval(t))
     ik.waistRefPose = SE3(eye(3), posesWaist.eval(t))
     qs.append(ik.solve(qs[-1]))
-    
+    print(f"\r{int(t / posesLeft.max_t() * 100)}%", end="")
+
+print("\r100%")
+
+
 for i in range(0, len(qs)-1):
     q_diff = (qs[i+1] - qs[i]) / nb_iter
     q = qs[i]

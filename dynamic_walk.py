@@ -179,7 +179,7 @@ def cost(xy):
         c += np.sum(np.sum(np.square(cp_list[i] - com_interp[i]), axis=0) * integral_dt)
     return c
 
-traj_com = fmin_bfgs(cost, com)
+traj_com = fmin_bfgs(cost, com, disp=False)
 traj_com = np.reshape(traj_com, (-1,2))
 
 for coord in traj_com:
@@ -194,12 +194,17 @@ nb_iter = int(increment / dt)
 
 qs = [q_init]
 
+print("0%", end="")
+
 for t in np.arange(0, posesLeft.max_t(), increment):
     ik = InverseKinematics(robot)
     ik.leftFootRefPose = SE3(eye(3), posesLeft.eval(t))
     ik.rightFootRefPose = SE3(eye(3), posesRight.eval(t))
     ik.waistRefPose = SE3(eye(3), posesWaist.eval(t))
     qs.append(ik.solve(qs[-1]))
+    print(f"\r{int(t / posesLeft.max_t() * 100)}%", end="")
+
+print("\r100%")
 
 # Affichage
 

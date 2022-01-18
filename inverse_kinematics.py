@@ -30,9 +30,9 @@ class InverseKinematics(object):
     def cost(self, q):
         forwardKinematics(self.robot.model, self.robot.data, q)
 
-        leftFootPose = self.robot.data.oMi[self.robot.leftFootJointId].copy()
-        rightFootPose = self.robot.data.oMi[self.robot.rightFootJointId].copy()
-        waistPose = self.robot.data.oMi[self.robot.waistJointId].copy()
+        leftFootPose = self.robot.data.oMi[self.robot.leftFootJointId]
+        rightFootPose = self.robot.data.oMi[self.robot.rightFootJointId]
+        waistPose = self.robot.data.oMi[self.robot.waistJointId]
 
         diffLeftFoot = self.leftFootRefPose.translation - leftFootPose.translation
         diffRightFoot = self.rightFootRefPose.translation - rightFootPose.translation
@@ -49,5 +49,5 @@ class InverseKinematics(object):
         return ssq
 
     def solve(self, q_init):
-        bfgs_result = fmin_bfgs(self.cost, q_init)
+        bfgs_result = fmin_bfgs(self.cost, q_init, disp=False)
         return bfgs_result.reshape(15, 1)
